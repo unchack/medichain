@@ -86,12 +86,12 @@ services:
       # solo mode configuration
       #- ./solo/channel-artifacts:/tmp/channel-artifacts
       #- ./solo/configtx.yaml:/etc/hyperledger/fabric/configtx.yaml
-      #- ./solo/crypto-config.yaml:/etc/hyperledger/fabric/crypto-config.yaml
+      #- ./solo/crypto-hfc-config.yaml:/etc/hyperledger/fabric/crypto-hfc-config.yaml
       #- ./solo/crypto-config:/etc/hyperledger/fabric/crypto-config
       #- ./examples:/opt/gopath/src/github.com/hyperledger/fabric/examples
       # kafka mode configuration
       - ./kafka/channel-artifacts:/tmp/channel-artifacts
       - ./kafka/configtx.yaml:/etc/hyperledger/fabric/configtx.yaml
-      - ./kafka/crypto-config.yaml:/etc/hyperledger/fabric/crypto-config.yaml
+      - ./kafka/crypto-hfc-config.yaml:/etc/hyperledger/fabric/crypto-hfc-config.yaml
       - ./kafka/crypto-config:/etc/hyperledger/fabric/crypto-config
       - ./examples:/opt/gopath/src/github.com/hyperledger/fabric/examples

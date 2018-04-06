@@ -4,6 +4,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"testing"
 	"fmt"
+	"io/ioutil"
 )
 
 func TestUnchainChaincode_Init(t *testing.T) {
@@ -16,31 +17,29 @@ func TestUnchainChaincode_Init(t *testing.T) {
 	}
 }
 
-func TestUnchainChaincode_WriteRecord(t *testing.T) {
+func TestUnchainChaincode_AddTestdata(t *testing.T) {
 	stub := createMockStub()
 
 	checkInit(t, stub, [][]byte{})
 
-	key := "asdfghjklasdfasdfa"
-	value := "012345678912345678"
+	serializedData, _ := ioutil.ReadFile("../fixtures/serialized-data.json")
 
-	checkInvoke(t, stub, [][]byte{[]byte("write_record"), []byte(key), []byte(value)})
-	checkState(t, stub, key, value)
-
+	checkInvoke(t, stub, [][]byte{[]byte("add_testdata"), serializedData })
+	checkState(t, stub, "01", "{}")
 }
 
-func TestUnchainChaincode_QueryRecordByKey(t *testing.T) {
-	stub := createMockStub()
-
-	checkInit(t, stub, [][]byte{})
-
-	key := "asdfghjklasdfasdfa"
-	value := "012345678912345678"
-
-	checkInvoke(t, stub, [][]byte{[]byte("write_record"), []byte(key), []byte(value)})
-
-	checkQuery(t, stub, "query_record_by_key", key, value)
-}
+//func TestUnchainChaincode_QueryRecordByKey(t *testing.T) {
+//	stub := createMockStub()
+//
+//	checkInit(t, stub, [][]byte{})
+//
+//	key := "asdfghjklasdfasdfa"
+//	value := "012345678912345678"
+//
+//	checkInvoke(t, stub, [][]byte{[]byte("write_record"), []byte(key), []byte(value)})
+//
+//	checkQuery(t, stub, "query_record_by_key", key, value)
+//}
 
 
 /* Test helper functions */

@@ -5,6 +5,7 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"encoding/json"
 )
 
 type UnchainChaincode struct{}
@@ -17,10 +18,12 @@ func (c *UnchainChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (c *UnchainChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 	function, args := stub.GetFunctionAndParameters()
-	if function == "register" {
+	if function == "add_testdata" {
+		return c.addTestdata(stub, args)
+	} else if function == "register" {
 		return c.register(stub, args)
 	} else if function == "get_history" {
-		return c.queryRecordByKey(stub, args)
+		return c.getHistoryForId(stub, args)
 	}
 
 	return shim.Error("Invalid invoke function name. Expecting \"register\" \"get_history\"")
@@ -29,8 +32,8 @@ func (c *UnchainChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response 
 func (c *UnchainChaincode) register(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// Expect two args
 	//
-	// args[0]: key hash
-	// args[1]: value hash
+	// args[0]:
+	// args[1]:
 	if len(args) != 2 {
 		msg := "Incorrect number of arguments. Expecting 2"
 		return c.handleError(stub, msg)
@@ -54,7 +57,7 @@ func (c *UnchainChaincode) register(stub shim.ChaincodeStubInterface, args []str
 	return shim.Success([]byte(`Successfully wrote key-value to ledger state`))
 }
 
-func (c *UnchainChaincode) queryRecordByKey(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (c *UnchainChaincode) getHistoryForId(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// Expect one args
 	//
 	// args[0]: key hash
@@ -79,6 +82,39 @@ func (c *UnchainChaincode) queryRecordByKey(stub shim.ChaincodeStubInterface, ar
 
 	// Return response
 	return shim.Success([]byte(res))
+}
+
+func (c *UnchainChaincode) addTestdata(stub shim.ChaincodeStubInterface, args []string) (pb.Response) {
+
+	// Expect one arg
+	// args[0]: json object with serialized data
+	if len(args) != 1 {
+		msg := "Incorrect number of arguments. Expecting 2"
+		return c.handleError(stub, msg)
+	}
+	data := args[0]
+
+	// Deserialize data
+	var objects []Object
+
+	err := json.Unmarshal([]byte(data), &objects)
+	if err != nil {
+		return c.handleError(stub, "Could not unmarshal test data")
+	}
+
+	for _, obj := range objects {
+		// marshal individual object back
+		objBytes, err := json.Marshal(obj)
+		if err != nil {
+			return c.handleError(stub, "Error marshalling object")
+		}
+		// Write to state with object ID and json obj
+		err = stub.PutState(obj.ID, objBytes)
+		if err != nil {
+			return c.handleError(stub, "Error writing to state.")
+		}
+	}
+	return shim.Success([]byte("OK"))
 }
 
 func (c *UnchainChaincode) getCaller(stub shim.ChaincodeStubInterface) ([]byte, error) {

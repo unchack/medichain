@@ -172,7 +172,7 @@ services:
     hostname: fabric-cli
     volumes:
         - ./scripts:/tmp/scripts
-        - ./crypto-config.yaml:/etc/hyperledger/fabric/crypto-config.yaml
+        - ./crypto-hfc-config.yaml:/etc/hyperledger/fabric/crypto-hfc-config.yaml
         - ./crypto-config:/etc/hyperledger/fabric/crypto-config
         - ./solo/configtx.yaml:/etc/hyperledger/fabric/configtx.yaml
         - ./solo/channel-artifacts:/tmp/channel-artifacts
@@ -193,7 +193,7 @@ services:
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
     volumes:
         - ./scripts:/tmp/scripts
-        - ./crypto-config.yaml:/etc/hyperledger/fabric/crypto-config.yaml
+        - ./crypto-hfc-config.yaml:/etc/hyperledger/fabric/crypto-hfc-config.yaml
         - ./crypto-config:/etc/hyperledger/fabric/crypto-config
         - ./solo/channel-artifacts:/tmp/channel-artifacts
         - ./solo/configtx.yaml:/etc/hyperledger/fabric/configtx.yaml
