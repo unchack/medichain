@@ -4,48 +4,39 @@ defaultDeployment = "explorer"
 
 [deployments]
     [deployments.janus]
-        host = "pi@pi-1"
-        
-        remotePath = "~/janus/"
-        
-        localWD = "janus/"
-        localPaths = [
-            "/"
+        hosts = ["pi@pi-1.local", "pi@pi-2.local", "pi@pi-3.local", "pi@pi-4.local"]
+
+        paths = [
+            "janus/:~/janus/"
         ]
-        
-        command = """
+
+        remoteCommand = """
             cd ~/janus
             docker-compose pull janus
             docker-compose up --force-recreate -d
         """
 
     [deployments.explorer]
-        host = "pi@pi-commander-01"
-        
-        remotePath = "~/blockchain-explorer/"
-        
-        localWD = "blockchain-explorer/"
-        localPaths = [
-            "/"
+        hosts = ["pi@pi-commander-01"]
+
+        paths = [
+            "blockchain-explorer/:~/blockchain-explorer/"
         ]
-        
-        command = """
+
+        remoteCommand = """
             cd ~/blockchain-explorer
             docker-compose pull blockchain-explorer
             docker-compose up --force-recreate -d
         """
 
     [deployments.chaincode]
-        host = "core@37.139.12.130"
-        
-        remotePath = "~/blockchaingers18/"
-        
-        localWD = "chain-code/"
-        localPaths = [
-            "/"
+        hosts = ["core@37.139.12.130"]
+
+        paths = [
+            "chain-code/:~/blockchaingers18/"
         ]
-        
-        command = """
+
+        remoteCommand = """
             cd ~/chain-code
             docker-compose up --force-recreate -d
         """
