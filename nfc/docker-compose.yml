@@ -1,0 +1,11 @@
+version: "3.2"
+
+services:
+  nfc-test:
+    build: .
+    tty: true
+    volumes:
+        - "./bin/discover:/app/discover"
+    working_dir: "/app"
+    privileged: true
+    entrypoint: "sh -c './discover'"
