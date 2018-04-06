@@ -1,0 +1,51 @@
+BuildPath = "cmd/ares/main.go"
+
+defaultDeployment = "explorer"
+
+[deployments]
+    [deployments.janus]
+        host = "pi@pi-1"
+        
+        remotePath = "~/janus/"
+        
+        localWD = "janus/"
+        localPaths = [
+            "/"
+        ]
+        
+        command = """
+            cd ~/janus
+            docker-compose pull janus
+            docker-compose up --force-recreate -d
+        """
+
+    [deployments.explorer]
+        host = "pi@pi-commander-01"
+        
+        remotePath = "~/blockchain-explorer/"
+        
+        localWD = "blockchain-explorer/"
+        localPaths = [
+            "/"
+        ]
+        
+        command = """
+            cd ~/blockchain-explorer
+            docker-compose pull blockchain-explorer
+            docker-compose up --force-recreate -d
+        """
+
+    [deployments.chaincode]
+        host = "core@37.139.12.130"
+        
+        remotePath = "~/blockchaingers18/"
+        
+        localWD = "chain-code/"
+        localPaths = [
+            "/"
+        ]
+        
+        command = """
+            cd ~/chain-code
+            docker-compose up --force-recreate -d
+        """

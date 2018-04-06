@@ -1,0 +1,28 @@
+version: "3.2"
+
+services:
+  api:
+    network_mode: bridge
+    image: unchain/golang-gin
+    tty: true
+    environment:
+      - "CFG=fixtures/api-gin.toml"
+    ports:
+      - "8787:8787"
+    volumes:
+      - "./client/last-build:/go/src/bitbucket.org/unchain/blockchaingers18/blockchain-explorer/client/"
+      - "./api:/go/src/bitbucket.org/unchain/blockchaingers18/blockchain-explorer/api/"
+    working_dir: "/go/src/bitbucket.org/unchain/blockchaingers18/blockchain-explorer/api/"
+    command: "gin --all --port 8787 --appPort=8786 --path=. --build=cmd/"
+  client:
+    network_mode: bridge
+    image: node:6.13
+    user: "1000"
+    ports:
+      - "4200:4200"
+    volumes:
+      - "./client:/client/"
+    working_dir: "/client"
+    command: "sh -c 'yarn install && yarn start'"
+#    entrypoint: "sh -c 'yarn start'"
+

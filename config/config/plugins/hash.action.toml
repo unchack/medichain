@@ -1,0 +1,9 @@
+hashAlgorithm = "SHA-512"
+
+[[hashOperations]]
+    name = "key"
+    fields = [
+      "source",
+      "destination",
+      "date"
+    ]

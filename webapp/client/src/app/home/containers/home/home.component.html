@@ -1,0 +1,69 @@
+<div class="app-container">
+  <div class="row" *ngIf="rows.length > 0">
+    <div class="col col-md-12">
+      <div class="data-table">
+        <ngx-datatable
+          #table
+          class='bootstrap expandable'
+          [rows]='rows'
+          [loadingIndicator]='loadingIndicator'
+          [columnMode]='"force"'
+          [headerHeight]="headerHeight"
+          [rowHeight]="rowHeight"
+          [footerHeight]="rowHeight"
+          [reorderable]='reorderable'
+          [limit]="pageLimit">
+
+          <!-- Row Detail Template -->
+          <ngx-datatable-row-detail [rowHeight]="detailRowHeight" #detailRow (toggle)="onDetailToggle($event)">
+            <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+              <div style="padding-left:135px;">
+                <div class="col col-md-offset-3 col-md-1 p-top">
+                  <img src="/assets/icons/info-icon.png" alt="Bad hash">
+                </div>
+                <div class="col col-md- p-top">
+                  <strong>There is no extra row here</strong>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-row-detail>
+          <ngx-datatable-column name="source" [sortable]="true">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              Source
+            </ng-template>
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="destination">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              Destination
+            </ng-template>
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="date">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              Date
+            </ng-template>
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="buttons" [width]="50">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              Actions
+            </ng-template>
+            <ng-template let-value="value" let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+              <button type="button" class="btn btn-link" (click)="toggleExpandRow(row)"><img
+                src="/assets/icons/corrections.png" class="link-icon"
+                alt="">
+              </button>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </div>
+    </div>
+  </div>
+</div>

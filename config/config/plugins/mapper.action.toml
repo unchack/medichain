@@ -1,0 +1,6 @@
+[write-record]
+    fcn = "write_record"
+    args = ["$.hash"]
+[query-record-batch-by-key]
+    fcn = "query_record_by_key"
+    args = ["$"]

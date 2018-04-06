@@ -1,0 +1,12 @@
+BuildPath = "cmd/janus/main.go"
+
+DeployHost = "pi@pi-1.local"
+DeployRemotePath = "~/go/"
+DeployLocalPaths = [
+    "bin/",
+    "config/",
+    "docker-compose.yml",
+    "Dockerfile",
+]
+
+DeployCommand = "cd go && docker-compose up --force-recreate -d"

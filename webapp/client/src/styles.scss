@@ -1,0 +1,75 @@
+@import 'assets/scss/custom-bootstrap';
+@import '~font-awesome/css/font-awesome.css';
+@import '../node_modules/ng2-toasty/bundles/style-default.css';
+// Global CSS HERE
+h1 {
+  font-family: 'Ubuntu', Roboto, sans-serif;
+  font-size: 16pt;
+  margin: 2em 0 1em 0;
+}
+
+.h1-icon {
+  height: 20px;
+  //width: 24px;
+  margin: 0 1em 0 0;
+}
+
+h3 {
+  font-family: 'Ubuntu', Roboto, sans-serif;
+  font-size: 14pt;
+  margin: 2em 0 1em 0;
+}
+
+.h3-icon {
+  height: 14px;
+  //width: 24px;
+  margin: 0 1em 0 0;
+}
+
+body {
+  font-family: 'Ubuntu', Roboto, sans-serif;
+}
+
+.btn {
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.btn-primary {
+  border: 2px solid #32b4e9;
+  font-family: 'Ubuntu', Roboto, sans-serif;
+  padding-left: 2em;
+  padding-right: 2em;
+  color: #333;
+  background-color: #fff;
+}
+
+.link-icon {
+  height: 20px
+}
+
+:disabled {
+  cursor: not-allowed;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0.1rem #79baff;
+}
+
+.nav-link, a {
+  cursor: pointer;
+}
+
+ul.dropdown-menu.left {
+  right: 0 !important;
+  left: inherit !important;
+}
+
+input {
+  border-radius: 0 !important;
+}
+
+// HELPERS
+.p-top {
+  padding-top: 1em;
+}

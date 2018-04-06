@@ -1,0 +1,8 @@
+apiPort = ":8787"
+adapterUrl = "http://192.168.9.1:8585"
+clientPath = "../client/last-build/"
+username = "enigma@unchain.io"
+password = "lostintranslation"
+role = "admin"
+apiTokenSecret = "secret"
+jwtSchema = ""

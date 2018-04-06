@@ -1,0 +1,28 @@
+[logger]
+#    level = "info"
+    level = "debug"
+    format = "text"
+#    format = "json"
+
+[[pipeline.actions]]
+    name = "input-mapper"
+    path = "bin/plugins/mapper.action.so"
+    configPath = "config/plugins/mapper.action.toml"
+
+[[pipeline.endpoints]]
+    name = "hfcv1"
+    path = "bin/plugins/hfcv1.endpoint.so"
+    configPath = "config/plugins/hfcv1.endpoint.yaml"
+
+[[pipeline.endpoints]]
+    name = "http"
+    path = "bin/plugins/http.endpoint.so"
+    configPath = "config/plugins/http.endpoint.yaml"
+
+
+[[pipeline.pipelines]]
+    name = "fabric-pipeline"
+    inputEndpointName = "http"
+    outputEndpointName = "hfcv1"
+    actionNames = ["input-mapper"]
+

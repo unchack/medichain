@@ -1,0 +1,48 @@
+
+:host {
+  display: block;
+}
+
+.app-container {
+  width: 80%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#search-form {
+  .ean-input {
+    margin-bottom: 1em;
+  }
+}
+
+.data-table {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+#time-range {
+  font-size: 11pt;
+}
+
+.time-range-before {
+  width: 60px;
+  padding-top: 46px;
+}
+
+.time-range-after {
+  padding: 46px 0 0 10px;
+}
+
+
+.btn-link {
+  padding: 0;
+  margin-right: 6px;
+  margin-top: -8px;
+  border: 0;
+}
+
+ul  {
+  list-style-type:none;
+}

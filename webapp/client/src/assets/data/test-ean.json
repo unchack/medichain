@@ -1,0 +1,10 @@
+[
+  {
+    "sourceEan": "987654321",
+    "destinationEan": "123456789",
+    "amountReceived": "22.3745896",
+    "date": "30-01-2017",
+    "time": "12:45",
+    "hash": "NSLFO83NS8dj00SCccxkjsOKSO"
+  }
+]
