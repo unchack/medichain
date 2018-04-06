@@ -1,0 +1,9 @@
+attributesMap:
+  write_record: []
+
+channelName: businesschannel
+hfcOrgID: Org1
+hfcUsername: user1
+keyValueStorePath: /tmp/enroll_user
+chainCodeID: unchain-cc
+fabricConfigPath: "config/dev/hfc-config.yaml"

@@ -1,59 +1,44 @@
 package nfc
 
 import (
-	"bytes"
 	"fmt"
-	"strings"
-
 	"os"
 	"syscall"
 	"time"
 	"os/signal"
 	"bitbucket.org/unchain-bc1718/medchain/nfc/pkg/nxprd"
+	"github.com/pkg/errors"
+	"bitbucket.org/unchain-bc1718/medchain/nfc/pkg/xhfc"
+	"github.com/hyperledger/fabric-sdk-go/api/apifabclient"
+	"github.com/unchainio/pkg/xconfig"
+	"github.com/unchainio/pkg/xerrors"
+	"github.com/unchainio/pkg/xlogger"
 )
-
-func getTag(t nxprd.TagType) string {
-	switch t {
-	case nxprd.TagType2:
-		return "2"
-	default:
-		return "Undefined"
-	}
-}
-
-func getTech(t nxprd.TechType) string {
-	switch t {
-	case nxprd.TechA:
-		return "A"
-	default:
-		return "Undefined"
-	}
-}
-
-func slice2Str(arr []byte) string {
-	var buffer bytes.Buffer
-
-	for i := 0; i < len(arr); i++ {
-		buffer.WriteString(fmt.Sprintf("0x%02X ", arr[i]))
-	}
-
-	return strings.TrimSpace(buffer.String())
-}
-
-func printInfo(dev *nxprd.Device) {
-	fmt.Printf("Card            : %s\n", dev.Params.DevType)
-	fmt.Printf("Tag type        : %s\n", getTag(dev.Params.TagType))
-	fmt.Printf("Technology type : %s\n", getTech(dev.Params.TechType))
-	fmt.Printf("UID             : %s\n", slice2Str(dev.Params.UID))
-	fmt.Printf("ATQ(A)          : %s\n", slice2Str(dev.Params.ATQ))
-	fmt.Printf("SAK             : 0x%02X\n", dev.Params.SAK)
-}
 
 func cleanup() {
 	// In order to cleanup the C part of the wrapper DeInit need to be called.
 	nxprd.DeInit()
 	fmt.Println("Clean up reader interface - done")
 }
+
+type Response struct {
+	responses []*apifabclient.TransactionProposalResponse
+	txID      *apifabclient.TransactionID
+}
+
+type Config struct {
+	Logger         		  *xlogger.Config 	  `yaml:"logger"`
+	AttributeMap          map[string][]string `yaml:"attributesMap"`
+	ChannelName           string              `yaml:"channelName"`
+	HFCUsername           string              `yaml:"hfcUsername"`
+	HFCOrgID              string              `yaml:"hfcOrgID"`
+	NetworkConfigFilePath string              `yaml:"networkConfigFilePath"`
+	ChannelConfigFilePath string              `yaml:"channelConfigFilePath"`
+	KeyValueStorePath     string              `yaml:"keyValueStorePath"`
+	ChainCodeID           string              `yaml:"chainCodeID"`
+	FabricConfigPath	  string			  `yaml:"fabricConfigPath"`
+}
+
 
 func main() {
 	c := make(chan os.Signal, 2)
@@ -64,28 +49,59 @@ func main() {
 		os.Exit(1)
 	}()
 
+	cfg := new(Config)
+
+	log, err := xlogger.New(cfg.Logger)
+	xerrors.PanicIfError(err)
+
+	err = xconfig.Load(
+		cfg,
+		xconfig.FromPathFlag("cfg", "config/dev/hfc-config.yaml"),
+		xconfig.FromEnv(),
+		xconfig.Verbose(true),
+	)
+	xerrors.PanicIfError(err)
+
+	if err != nil {
+		xerrors.PanicIfError(errors.New(fmt.Sprintf("Could not unmarshal config: %s", err)))
+	}
+
+	hfcClient := xhfc.BaseSetupImpl{
+		ConfigPath:      cfg.FabricConfigPath,
+		ChannelID:       cfg.ChannelName,
+		OrgID:           cfg.HFCOrgID,
+		ChannelConfig:   cfg.ChannelConfigFilePath,
+		ConnectEventHub: true,
+		ChainCodeID:     cfg.ChainCodeID,
+		Log:             log,
+	}
+
+	err = hfcClient.Initialize()
+
+	if err != nil {
+		xerrors.PanicIfError(errors.WithMessage(err, "failed to initialize hyperledger fabric SDK"))
+	}
+
+
 	for {
 		// Initialize the library. We need to do that once.
 		if err := nxprd.Init(); err != nil {
-			fmt.Println("\nError: Initializing NXP library failed")
-			panic(err)
+			xerrors.PanicIfError(errors.WithMessage(err, "failed to initialize NXP library"))
 		}
 
 		// Try to detect/discover a card/tag for 1000ms. Discover will block.
 		// 1000ms is the default timeout.
 		dev, err := nxprd.Discover(10000)
 		if err != nil {
-			fmt.Println("\nCouldn't detect card")
+			log.Println("\nCouldn't detect card")
 		} else {
 			if dev.Params.DevType == "Unknown" {
 				// A card/tag could be detected, but the wrapper doesn't support it yet.
 				// So we can't read or write blocks, but we can access some parameters.
-				fmt.Println("\nFound an unknown card")
-				fmt.Println("")
-				printInfo(dev)
+				log.Println("\nFound an unknown card")
+				log.Println("")
 			} else {
-				fmt.Println("")
-				printInfo(dev)
+				log.Println("\nFound a known card")
 				time.Sleep(2 * time.Second)
 			}
 		}

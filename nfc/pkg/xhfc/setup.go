@@ -28,8 +28,7 @@ type BaseSetupImpl struct {
 	Initialized     bool
 	ChannelConfig   string
 
-	ConfigByte []byte
-	ConfigType string
+	ConfigPath string
 	Log        logger.Logger
 }
 
@@ -37,7 +36,7 @@ var resMgmtClient resmgmt.ResourceMgmtClient
 
 func (setup *BaseSetupImpl) Initialize() error {
 	// Create SDK setup for the integration tests
-	sdk, err := fabsdk.New(config.FromRaw(setup.ConfigByte, setup.ConfigType))
+	sdk, err := fabsdk.New(config.FromFile(setup.ConfigPath))
 
 	if err != nil {
 		return errors.WithMessage(err, "SDK init failed")
