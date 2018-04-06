@@ -17,16 +17,16 @@ func (c *UnchainChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (c *UnchainChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 	function, args := stub.GetFunctionAndParameters()
-	if function == "write_record" {
-		return c.writeRecord(stub, args)
-	} else if function == "query_record_by_key" {
+	if function == "register" {
+		return c.register(stub, args)
+	} else if function == "get_history" {
 		return c.queryRecordByKey(stub, args)
 	}
 
-	return shim.Error("Invalid invoke function name. Expecting \"write_record\" \"query_record_by_key\"")
+	return shim.Error("Invalid invoke function name. Expecting \"register\" \"get_history\"")
 }
 
-func (c *UnchainChaincode) writeRecord(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (c *UnchainChaincode) register(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// Expect two args
 	//
 	// args[0]: key hash
@@ -96,3 +96,35 @@ func main() {
 		fmt.Printf("Error starting Unchain chaincode1: %s", err)
 	}
 }
+
+type Object struct {
+	ID                 string              `json:"id"`
+	OwnerID            string              `json:"ownerId"`
+	Type               ObjectType          `json:"objectType"`                // [ Pallet / Case / Secondary / Primary ]
+	ExpirationDate     int                 `json:"expirationDate, omitempty"` // unix epoch in ms
+	Description        string              `json:"description"`
+	Children           []string            `json:"children, omitempty"` // IDs of children
+	RegistrationEvents []RegistrationEvent `json:"registrationEvents, omitempty"`
+}
+
+type RegistrationEvent struct {
+	SubjectID string    `json:"subject"` // ID of Subject of registration - who registered?
+	Type      EventType `json:"eventType"`
+	TimeStamp int       `json:"timeStamp"` // unix epoch in ms
+}
+
+type ObjectType int
+
+const (
+	Pallet    ObjectType = iota
+	Case
+	Secondary
+	Primary
+)
+
+type EventType int
+
+const (
+	Checkin  EventType = iota
+	Checkout
+)
