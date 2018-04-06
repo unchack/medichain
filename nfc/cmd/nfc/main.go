@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"bitbucket.org/unchain/nfc-explorer/pkg/nxprd"
 	"os"
 	"syscall"
 	"time"
 	"os/signal"
+	"bitbucket.org/unchain-bc1718/medchain/nfc/pkg/nxprd"
 )
 
 func getTag(t nxprd.TagType) string {
