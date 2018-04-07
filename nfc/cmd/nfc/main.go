@@ -1,15 +1,16 @@
-package nfc
+package main
 
 import (
 	"fmt"
 	"os"
+	"os/signal"
 	"syscall"
 	"time"
-	"os/signal"
+
 	"bitbucket.org/unchain-bc1718/medchain/nfc/pkg/nxprd"
-	"github.com/pkg/errors"
 	"bitbucket.org/unchain-bc1718/medchain/nfc/pkg/xhfc"
 	"github.com/hyperledger/fabric-sdk-go/api/apifabclient"
+	"github.com/pkg/errors"
 	"github.com/unchainio/pkg/xconfig"
 	"github.com/unchainio/pkg/xerrors"
 	"github.com/unchainio/pkg/xlogger"
@@ -27,7 +28,7 @@ type Response struct {
 }
 
 type Config struct {
-	Logger         		  *xlogger.Config 	  `yaml:"logger"`
+	Logger                *xlogger.Config     `yaml:"logger"`
 	AttributeMap          map[string][]string `yaml:"attributesMap"`
 	ChannelName           string              `yaml:"channelName"`
 	HFCUsername           string              `yaml:"hfcUsername"`
@@ -36,9 +37,8 @@ type Config struct {
 	ChannelConfigFilePath string              `yaml:"channelConfigFilePath"`
 	KeyValueStorePath     string              `yaml:"keyValueStorePath"`
 	ChainCodeID           string              `yaml:"chainCodeID"`
-	FabricConfigPath	  string			  `yaml:"fabricConfigPath"`
+	FabricConfigPath      string              `yaml:"fabricConfigPath"`
 }
-
 
 func main() {
 	c := make(chan os.Signal, 2)
@@ -81,7 +81,6 @@ func main() {
 	if err != nil {
 		xerrors.PanicIfError(errors.WithMessage(err, "failed to initialize hyperledger fabric SDK"))
 	}
-
 
 	for {
 		// Initialize the library. We need to do that once.

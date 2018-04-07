@@ -3,6 +3,37 @@ BuildPath = "cmd/ares/main.go"
 defaultDeployment = "explorer"
 
 [deployments]
+    [deployments.nfc]
+        hosts = ["pi@pi-4.local"]
+        paths = [
+            "./nfc/:~/go/src/bitbucket.org/unchain-bc1718/medchain/nfc/"
+        ]
+        
+        remoteCommand = """
+            cd ~/go/src/bitbucket.org/unchain-bc1718/medchain/nfc/
+            /usr/local/go/bin/go run cmd/nfc/main.go
+        """
+
+    [deployments.mac]
+        hosts = ["pi@pi-4.local"]
+
+        paths = [
+            "bin/mac:~/mac",
+            "nfc/config/$HOST/"
+        ]
+        
+        localCommand = """
+            export GOARCH="arm"
+            export GOOS="linux"
+            GOARM=7
+             
+            go build -o bin/mac nfc/cmd/mac/main.go
+        """
+
+        remoteCommand = """
+            ./mac
+        """
+
     [deployments.janus]
         hosts = ["pi@pi-1.local", "pi@pi-2.local", "pi@pi-3.local", "pi@pi-4.local"]
 

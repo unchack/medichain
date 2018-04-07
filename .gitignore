@@ -154,3 +154,5 @@ blockchain-explorer/client/e2e/*.map
 
 #gin
 #blockchain-explorer/api/gin-bin
+bin/
+main
