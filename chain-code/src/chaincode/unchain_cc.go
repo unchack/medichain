@@ -6,6 +6,8 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"encoding/json"
+	"bytes"
+	"strconv"
 )
 
 type UnchainChaincode struct{}
@@ -32,29 +34,63 @@ func (c *UnchainChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response 
 func (c *UnchainChaincode) register(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// Expect two args
 	//
-	// args[0]:
-	// args[1]:
-	if len(args) != 2 {
+	// args[0]: event, i.e. 0
+	// args[1]: objectId, i.e. "01"
+	// args[2]: timestamp, i.e. 1451293134
+	if len(args) != 3 {
 		msg := "Incorrect number of arguments. Expecting 2"
 		return c.handleError(stub, msg)
 	}
-	key := args[0]
-	value := args[1]
 
-	// Check that hashes are of length 18
-	if len(key) != 18 && len(value) != 18 {
-		msg := "Incorrect length of key or value string. Should be 18."
-		return c.handleError(stub, msg)
+	// Fetch Object
+	key := args[1]
+	objBytes, err := stub.GetState(key)
+
+	var object Object
+	err = json.Unmarshal(objBytes, &object)
+	if err != nil {
+		return c.handleError(stub, "Could not unmarshal object")
 	}
 
-	// Write to state
-	err := stub.PutState(key, []byte(value))
+	subj, err := c.getCaller(stub)
+	if err != nil {
+		return c.handleError(stub, "Could not get caller")
+	}
+	n := bytes.IndexByte(subj, 0)
+
+	subjID := string(subj[:n])
+	timestamp, err := strconv.Atoi(args[2])
+	if err != nil {
+		c.handleError(stub, "Could not convert timestamp to int")
+	}
+	evType, err := strconv.Atoi(args[0])
+	if err != nil {
+		return c.handleError(stub, "Could not convert event type to int")
+	}
+
+	// Create registration event
+	re := RegistrationEvent{
+		SubjectID: subjID,
+		TimeStamp: timestamp,
+		Type: EventType(evType),
+	}
+
+	// Add registration event to object
+	object.RegistrationEvents = append(object.RegistrationEvents, re)
+
+	objBytes, err = json.Marshal(object)
+	if err != nil {
+		c.handleError(stub, "Could not marshal object back to bytes")
+	}
+
+	// Write object to state
+	err = stub.PutState(key, objBytes)
 	if err != nil {
 		return c.handleError(stub, "Error writing to state.")
 	}
 
 	// Return response
-	return shim.Success([]byte(`Successfully wrote key-value to ledger state`))
+	return shim.Success([]byte(`Successfully wrote registration event to object`))
 }
 
 func (c *UnchainChaincode) getHistoryForId(stub shim.ChaincodeStubInterface, args []string) pb.Response {
