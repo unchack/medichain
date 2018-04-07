@@ -3,7 +3,7 @@ version: '2'
 services:
   orderer:
     container_name: orderer
-    image: hyperledger/fabric-orderer
+    image: hyperledger/fabric-orderer:x86_64-1.0.5 
     environment:
       - ORDERER_GENERAL_LOGLEVEL=debug
       - ORDERER_GENERAL_LISTENADDRESS=orderer
@@ -22,7 +22,7 @@ services:
       - 7050:7050
   peer:
     container_name: peer
-    image: hyperledger/fabric-peer
+    image: hyperledger/fabric-peer:x86_64-1.0.5 
     environment:
       - CORE_PEER_ID=peer
       - CORE_PEER_ADDRESS=peer:7051
@@ -44,7 +44,7 @@ services:
 
   cli:
     container_name: cli
-    image: hyperledger/fabric-tools
+    image: hyperledger/fabric-tools:x86_64-1.0.5 
     tty: true
     environment:
       - GOPATH=/opt/gopath
@@ -59,7 +59,7 @@ services:
     volumes:
         - /var/run/:/host/var/run/
         - ./msp:/etc/hyperledger/msp
-        - ./../cmd/chaincode:/opt/gopath/src/chaincodedev/chaincode
+        - ./../src/chaincode:/opt/gopath/src/chaincodedev/chaincode
         - ./:/opt/gopath/src/chaincodedev/
     depends_on:
       - orderer
@@ -67,7 +67,7 @@ services:
 
   chaincode:
     container_name: chaincode
-    image: hyperledger/fabric-ccenv
+    image: hyperledger/fabric-ccenv:x86_64-1.0.5 
     tty: true
     environment:
       - GOPATH=/opt/gopath
@@ -82,7 +82,7 @@ services:
     volumes:
         - /var/run/:/host/var/run/
         - ./msp:/etc/hyperledger/msp
-        - ./../cmd/chaincode:/opt/gopath/src/chaincode
+        - ./../src/chaincode:/opt/gopath/src/chaincode
     depends_on:
       - orderer
       - peer

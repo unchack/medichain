@@ -156,3 +156,9 @@ blockchain-explorer/client/e2e/*.map
 #blockchain-explorer/api/gin-bin
 bin/
 main
+
+.vscode
+node_modules
+
+#dev-env
+chain-code/dev-env/myc.block

@@ -20,16 +20,18 @@
 #  name = "github.com/x/y"
 #  version = "2.4.0"
 
+[[constraint]]
+ name = "github.com/hyperledger/fabric"
+ version = "1.0.5"
 
 [[constraint]]
-  name = "github.com/hyperledger/fabric"
-  version = "1.1.0-preview"
+ name = "github.com/hyperledger/fabric-sdk-go"
+ revision = "614551a752802488988921a730b172dada7def1d"
 
 [[constraint]]
-#  branch = "master"
-  revision = "614551a752802488988921a730b172dada7def1d"
-  name = "github.com/hyperledger/fabric-sdk-go"
+ branch = "master"
+ name = "github.com/pkg/errors"
 
-[[constraint]]
-  branch = "master"
-  name = "github.com/pkg/errors"
+[[override]]
+ name = "github.com/op/go-logging"
+ branch = "master"
